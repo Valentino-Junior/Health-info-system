@@ -60,3 +60,20 @@ def program_create(request):
     
     context = {'form': form, 'title': 'Create Health Program'}
     return render(request, 'program/form.html', context)
+
+
+def program_update(request, pk):
+    """View for updating an existing health program"""
+    program = get_object_or_404(HealthProgram, pk=pk)
+    
+    if request.method == 'POST':
+        form = HealthProgramForm(request.POST, instance=program)
+        if form.is_valid():
+            program = form.save()
+            messages.success(request, f"Health program '{program.name}' updated successfully!")
+            return redirect('program_detail', pk=program.id)
+    else:
+        form = HealthProgramForm(instance=program)
+    
+    context = {'form': form, 'program': program, 'title': 'Update Health Program'}
+    return render(request, 'program/form.html', context)
