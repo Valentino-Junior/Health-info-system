@@ -124,3 +124,20 @@ def client_create(request):
     
     context = {'form': form, 'title': 'Register New Client'}
     return render(request, 'client/form.html', context)
+
+
+def client_update(request, pk):
+    """View for updating client information"""
+    client = get_object_or_404(Client, pk=pk)
+    
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=client)
+        if form.is_valid():
+            client = form.save()
+            messages.success(request, f"Client '{client.full_name}' updated successfully!")
+            return redirect('client_detail', pk=client.id)
+    else:
+        form = ClientForm(instance=client)
+    
+    context = {'form': form, 'client': client, 'title': 'Update Client Information'}
+    return render(request, 'client/form.html', context)
