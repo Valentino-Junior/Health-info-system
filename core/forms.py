@@ -55,3 +55,20 @@ class EnrollmentForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Notes', 'rows': 3}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+
+class MultiEnrollmentForm(forms.Form):
+    """Form for enrolling a client in multiple programs at once"""
+    programs = forms.ModelMultipleChoiceField(
+        queryset=HealthProgram.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        required=True
+    )
+    enrollment_date = forms.DateField(
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        required=True
+    )
+    notes = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Notes', 'rows': 3}),
+        required=False
+    )
