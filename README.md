@@ -24,17 +24,6 @@ A comprehensive health information system for managing clients and health progra
 - **Database**: SQLite (development), PostgreSQL (production)
 
 
-## 📹 Project Walkthrough
-
-[🎥 Watch Full Project Demonstration](https://go.screenpal.com/watch/cTftY8nQfn0)
-
-Get a comprehensive overview of the Health Information System, its features, and how to use the application. The video provides a step-by-step walkthrough of the system's key functionalities.
-
-## 📱 Screenshots
-
-### Dashboard
-![Dashboard Preview](https://media-hosting.imagekit.io/c201dcaf2f974e3e/dashboard.png?Expires=1840391723&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=uBvgWb1h2dMZ5oKM8SMQNrx1cJOlGtP1YvaA5x~pmWLy27pr1CQGZlx9WUMMSbuwd6rvHeWrhcTlTKCI3oBQvLSBcXKUwv9YwMyD3ZjNrlyKFLHVRPmsIInhhslKhY4vdQTv3kfT5ABYkWWaI4icNiOGsIYL7U8mWXZUIdwy~r6R44e9GRWccwacwGymbO3I58ITxQJokqH5ZSYrR7YlBI-Xu5pt301pszgKsEykfxsmdj0deLj6eoi06XbSVGME86Y75jAUfVxWHUgz~hKHFbtWsYKnIn2C~vYTu9va7oGlpIGVM4xhxEvWeOQwO-ldTKmJlPlCrq-~-9ijrpx7ZQ__)
-
 ## 📋 Project Structure
 
 ```
@@ -167,6 +156,14 @@ Interactive charts provide insights into:
 - **Input Validation**: Thorough validation of all user inputs
 - **Secure API**: API endpoints protected with authentication
 - **Data Privacy**: Client information is protected and access-controlled
+
+
+## 📹 Project Walkthrough
+
+[🎥 Watch Full Project Demonstration](https://go.screenpal.com/watch/cTftY8nQfn0)
+
+Get a comprehensive overview of the Health Information System, its features, and how to use the application. The video provides a step-by-step walkthrough of the system's key functionalities.
+
 
 ## 📱 Screenshots
 
