@@ -110,11 +110,9 @@
                 <i class="fas fa-chart-pie me-2"></i> Program Distribution
             </div>
             <div class="card-body">
-                <div class="text-center py-4">
-                    <i class="fas fa-chart-pie fa-4x mb-3" style="color: #3498db;"></i>
-                    <p class="mb-0">Distribution of enrollments across different programs</p>
+                <div class="chart-container">
+                    <canvas id="programDistributionChart"></canvas>
                 </div>
-                <!-- Placeholder for future chart -->
             </div>
         </div>
     </div>
@@ -125,11 +123,9 @@
                 <i class="fas fa-calendar-alt me-2"></i> Enrollment Timeline
             </div>
             <div class="card-body">
-                <div class="text-center py-4">
-                    <i class="fas fa-calendar-alt fa-4x mb-3" style="color: #3498db;"></i>
-                    <p class="mb-0">Enrollment activity over time</p>
+                <div class="chart-container">
+                    <canvas id="enrollmentTimelineChart"></canvas>
                 </div>
-                <!-- Placeholder for future chart -->
             </div>
         </div>
     </div>
@@ -150,13 +146,143 @@
         font-weight: 500;
         padding: 0.5em 0.75em;
     }
+    
+    canvas {
+        max-width: 100%;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Future JavaScript for charts or interactivity
+        // Check if Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js is not loaded');
+            return;
+        }
+        
+        // Check if canvas elements exist
+        const programCtx = document.getElementById('programDistributionChart');
+        const timelineCtx = document.getElementById('enrollmentTimelineChart');
+        
+        if (!programCtx || !timelineCtx) {
+            console.error('Canvas elements not found');
+            return;
+        }
+        
+        // Program Distribution Chart
+        const programData = {
+            labels: [
+                {% for program_data in program_stats %}
+                    '{{ program_data.name }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Enrollments per Program',
+                data: [
+                    {% for program_data in program_stats %}
+                        {{ program_data.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+                    '#1abc9c', '#d35400', '#34495e', '#16a085', '#c0392b',
+                    '#2980b9', '#f1c40f', '#8e44ad', '#27ae60', '#e67e22'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        new Chart(programCtx, {
+            type: 'pie',
+            data: programData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 15,
+                            padding: 15
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribution of Enrollments by Program',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Enrollment Timeline Chart
+        const timelineData = {
+            labels: [
+                {% for month_data in timeline_stats %}
+                    '{{ month_data.month }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Number of Enrollments',
+                data: [
+                    {% for month_data in timeline_stats %}
+                        {{ month_data.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                borderWidth: 2,
+                tension: 0.3,
+                pointBackgroundColor: 'rgba(52, 152, 219, 1)'
+            }]
+        };
+        
+        new Chart(timelineCtx, {
+            type: 'line',
+            data: timelineData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Enrollment Trends Over Time',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
     });
 </script>
 {% endblock %}
