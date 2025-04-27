@@ -33,3 +33,15 @@ def program_list(request):
     programs = HealthProgram.objects.all()
     context = {'programs': programs}
     return render(request, 'program/list.html', context)
+
+
+def program_detail(request, pk):
+    """View for displaying details of a specific health program"""
+    program = get_object_or_404(HealthProgram, pk=pk)
+    enrollments = Enrollment.objects.filter(program=program).select_related('client')
+    
+    context = {
+        'program': program,
+        'enrollments': enrollments
+    }
+    return render(request, 'program/detail.html', context)
