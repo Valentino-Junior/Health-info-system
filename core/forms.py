@@ -42,3 +42,16 @@ class ClientSearchForm(forms.Form):
             'aria-label': 'Search'
         })
     )
+
+
+class EnrollmentForm(forms.ModelForm):
+    """Form for enrolling clients in health programs"""
+    class Meta:
+        model = Enrollment
+        fields = ['program', 'enrollment_date', 'notes', 'is_active']
+        widgets = {
+            'program': forms.Select(attrs={'class': 'form-select'}),
+            'enrollment_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Notes', 'rows': 3}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
