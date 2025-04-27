@@ -45,3 +45,18 @@ def program_detail(request, pk):
         'enrollments': enrollments
     }
     return render(request, 'program/detail.html', context)
+
+
+def program_create(request):
+    """View for creating a new health program"""
+    if request.method == 'POST':
+        form = HealthProgramForm(request.POST)
+        if form.is_valid():
+            program = form.save()
+            messages.success(request, f"Health program '{program.name}' created successfully!")
+            return redirect('program_detail', pk=program.id)
+    else:
+        form = HealthProgramForm()
+    
+    context = {'form': form, 'title': 'Create Health Program'}
+    return render(request, 'program/form.html', context)
