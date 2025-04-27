@@ -12,3 +12,20 @@ class HealthProgramForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Program Name'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Program Description', 'rows': 3}),
         }
+
+
+class ClientForm(forms.ModelForm):
+    """Form for registering and updating clients"""
+    class Meta:
+        model = Client
+        fields = ['first_name', 'last_name', 'date_of_birth', 'gender', 'phone_number', 'email', 'address', 'national_id']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'gender': forms.Select(attrs={'class': 'form-select'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 3}),
+            'national_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'National ID'}),
+        }
