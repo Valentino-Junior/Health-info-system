@@ -216,3 +216,16 @@ def update_enrollment(request, enrollment_id):
         'title': f'Update Enrollment for {client.full_name}'
     }
     return render(request, 'client/update_enrollment.html', context)
+
+
+
+def enrollment_list(request):
+    """View for listing all enrollments in the system"""
+    enrollments = Enrollment.objects.all().select_related('client', 'program').order_by('-enrollment_date')
+    
+    context = {
+        'enrollments': enrollments,
+        'total_enrollments': enrollments.count(),
+        'title': 'All Enrollments'
+    }
+    return render(request, 'enrollment/list.html', context)
