@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ client.full_name }} - Health Information System{% endblock %}
+
+{% block page_header %}Client Profile: {{ client.full_name }}{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'client_update' pk=client.id %}" class="btn btn-sm btn-warning">
+        <i class="fas fa-edit me-1"></i> Edit Client
+    </a>
+    <a href="{% url 'enroll_client' client_id=client.id %}" class="btn btn-sm btn-success">
+        <i class="fas fa-clipboard-list me-1"></i> Enroll in Program
+    </a>
+    <a href="{% url 'client_list' %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Clients
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Client Information -->
+    <div class="col-md-5" data-aos="fade-right">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-user-circle me-2"></i> Personal Information
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="avatar-circle mx-auto mb-3">
+                        <span class="initials">{{ client.first_name.0 }}{{ client.last_name.0 }}</span>
+                    </div>
+                    <h4 class="mb-0">{{ client.full_name }}</h4>
+                    <p class="text-muted">{{ client.national_id }}</p>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1 text-muted small">Date of Birth</p>
+                        <p class="mb-0 fw-bold">{{ client.date_of_birth|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1 text-muted small">Age</p>
+                        <p class="mb-0 fw-bold">{{ client.age }} years</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1 text-muted small">Gender</p>
+                        <p class="mb-0 fw-bold">{{ client.get_gender_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1 text-muted small">Registration Date</p>
+                        <p class="mb-0 fw-bold">{{ client.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <p class="mb-1 text-muted small">Phone Number</p>
+                    <p class="mb-0 fw-bold">{{ client.phone_number|default:"Not provided" }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="mb-1 text-muted small">Email Address</p>
+                    <p class="mb-0 fw-bold">{{ client.email|default:"Not provided" }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="mb-1 text-muted small">Home Address</p>
+                    <p class="mb-0 fw-bold">{{ client.address|default:"Not provided" }}</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="text-center">
+                    <a href="{% url 'client_update' pk=client.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit me-1"></i> Edit Information
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Program Enrollments -->
+    <div class="col-md-7" data-aos="fade-left">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-clipboard-list me-2"></i> Health Program Enrollments
+                </div>
+                <a href="{% url 'enroll_client' client_id=client.id %}" class="btn btn-sm btn-success">
+                    <i class="fas fa-plus-circle me-1"></i> Enroll in Program
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Program</th>
+                                <th>Enrollment Date</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr class="enrollment-row" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
+                                <td>{{ enrollment.program.name }}</td>
+                                <td>{{ enrollment.enrollment_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if enrollment.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ enrollment.notes|truncatechars:30|default:"-" }}</td>
+                                <td>
+                                    <a href="{% url 'update_enrollment' enrollment_id=enrollment.id %}" class="btn btn-sm btn-warning text-white">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle me-2"></i> This client is not enrolled in any health programs.
+                                        <a href="{% url 'enroll_client' client_id=client.id %}" class="alert-link">Enroll now</a>.
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- API Information -->
+        <div class="card" data-aos="fade-up">
+            <div class="card-header">
+                <i class="fas fa-code me-2"></i> API Access
+            </div>
+            <div class="card-body">
+                <p>You can access this client's information through the API:</p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">GET</span>
+                    <input type="text" class="form-control" value="/api/clients/{{ client.id }}/" readonly id="api-url">
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="alert alert-info mb-0">
+                    <i class="fas fa-info-circle me-2"></i> Authentication required. Use the API browser for testing.
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="/api/clients/{{ client.id }}/" class="btn btn-sm btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i> Test in API Browser
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 36px;
+        font-weight: bold;
+    }
+    
+    .initials {
+        text-transform: uppercase;
+    }
+    
+    .enrollment-row {
+        transition: all 0.3s ease;
+    }
+    
+    .enrollment-row:hover {
+        background-color: #f0f7ff;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyToClipboard() {
+        const apiUrl = document.getElementById('api-url');
+        apiUrl.select();
+        document.execCommand('copy');
+        
+        // Show tooltip or alert that URL was copied
+        alert('API URL copied to clipboard!');
+    }
+    
+    // Animation for enrollment rows
+    document.addEventListener('DOMContentLoaded', function() {
+        const enrollmentRows = document.querySelectorAll('.enrollment-row');
+        
+        enrollmentRows.forEach((row, index) => {
+            setTimeout(() => {
+                row.style.opacity = '1';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}
