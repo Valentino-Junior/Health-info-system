@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ program.name }} - Health Information System{% endblock %}
+
+{% block page_header %}Health Program: {{ program.name }}{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'program_update' pk=program.id %}" class="btn btn-sm btn-warning">
+        <i class="fas fa-edit me-1"></i> Edit Program
+    </a>
+    <a href="{% url 'program_list' %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Programs
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Program Information -->
+    <div class="col-md-4" data-aos="fade-right">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-info-circle me-2"></i> Program Information
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="program-icon mx-auto mb-3">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <h4 class="mb-0">{{ program.name }}</h4>
+                    <p class="text-muted">Health Program</p>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <p class="mb-1 text-muted small">Description</p>
+                    <p class="mb-0">{{ program.description|default:"No description provided." }}</p>
+                </div>
+                
+                <hr>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1 text-muted small">Created On</p>
+                        <p class="mb-0 fw-bold">{{ program.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1 text-muted small">Last Updated</p>
+                        <p class="mb-0 fw-bold">{{ program.updated_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <p class="mb-1 text-muted small">Total Enrollments</p>
+                        <p class="mb-0 fw-bold">{{ enrollments.count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="text-center">
+                    <a href="{% url 'program_update' pk=program.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit me-1"></i> Edit Program
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- API Information -->
+        <div class="card" data-aos="fade-up">
+            <div class="card-header">
+                <i class="fas fa-code me-2"></i> API Access
+            </div>
+            <div class="card-body">
+                <p>You can access this program's information through the API:</p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">GET</span>
+                    <input type="text" class="form-control" value="/api/programs/{{ program.id }}/" readonly id="api-url">
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="alert alert-info mb-0">
+                    <i class="fas fa-info-circle me-2"></i> Authentication required. Use the API browser for testing.
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="/api/programs/{{ program.id }}/" class="btn btn-sm btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i> Test in API Browser
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enrolled Clients -->
+    <div class="col-md-8" data-aos="fade-left">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-users me-2"></i> Enrolled Clients
+                </div>
+                <span class="badge bg-primary">{{ enrollments.count }} Clients</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Client Name</th>
+                                <th>ID</th>
+                                <th>Enrollment Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr class="client-row" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
+                                <td>{{ enrollment.client.full_name }}</td>
+                                <td>{{ enrollment.client.national_id }}</td>
+                                <td>{{ enrollment.enrollment_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if enrollment.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'client_detail' pk=enrollment.client.id %}" class="btn btn-sm btn-info text-white" title="View Client">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'update_enrollment' enrollment_id=enrollment.id %}" class="btn btn-sm btn-warning text-white" title="Update Enrollment">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle me-2"></i> No clients are enrolled in this program yet.
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'client_list' %}" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-1"></i> Enroll a Client
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .program-icon {
+        width: 100px;
+        height: 100px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 36px;
+    }
+    
+    .client-row {
+        transition: all 0.3s ease;
+    }
+    
+    .client-row:hover {
+        background-color: #f0f7ff;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyToClipboard() {
+        const apiUrl = document.getElementById('api-url');
+        apiUrl.select();
+        document.execCommand('copy');
+        
+        // Show tooltip or alert that URL was copied
+        alert('API URL copied to clipboard!');
+    }
+    
+    // Animation for client rows
+    document.addEventListener('DOMContentLoaded', function() {
+        const clientRows = document.querySelectorAll('.client-row');
+        
+        clientRows.forEach((row, index) => {
+            setTimeout(() => {
+                row.style.opacity = '1';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}
