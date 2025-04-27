@@ -15,8 +15,8 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8" data-aos="fade-up">
-        <div class="card">
-            <div class="card-header">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
                 <i class="fas {% if program %}fa-edit{% else %}fa-plus-circle{% endif %} me-2"></i> 
                 {{ title }}
             </div>
@@ -24,39 +24,56 @@
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     
+                    <!-- Program Details Section -->
                     <div class="row mb-4">
-                        <div class="col-12 text-center">
-                            <h5 class="text-muted mb-3">Program Details</h5>
+                        <div class="col-12 text-center" data-aos="fade-up">
+                            <h5 class="text-success mb-2">
+                                <i class="fas fa-clipboard-list me-2"></i>Program Details
+                            </h5>
                             <hr>
                         </div>
                     </div>
                     
-                    <div class="mb-3" data-aos="fade-up" data-aos-delay="100">
-                        <label for="{{ form.name.id_for_label }}" class="form-label">Program Name *</label>
-                        {{ form.name }}
-                        {% if form.name.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.name.errors }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-4" data-aos="fade-up" data-aos-delay="150">
-                        <label for="{{ form.description.id_for_label }}" class="form-label">Program Description</label>
-                        {{ form.description }}
-                        {% if form.description.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.description.errors }}
-                        </div>
-                        {% endif %}
-                        <div class="form-text">
-                            Provide a detailed description of the health program, its objectives, and guidelines.
+                    <!-- Program Name -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+                            <div class="form-group">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
+                                    Program Name <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="text-danger mt-1 small">
+                                    {{ form.name.errors }}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">Enter a descriptive name for the health program (e.g., Tuberculosis Control Program)</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="row">
-                        <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="200">
-                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                    <!-- Program Description -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12" data-aos="fade-up" data-aos-delay="200">
+                            <div class="form-group">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
+                                    Program Description
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                <div class="text-danger mt-1 small">
+                                    {{ form.description.errors }}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">Provide a detailed description of the health program, its objectives, and guidelines.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="row mt-4">
+                        <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="300">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-2">
                                 <i class="fas {% if program %}fa-save{% else %}fa-plus-circle{% endif %} me-2"></i>
                                 {% if program %}Update Program{% else %}Create Program{% endif %}
                             </button>
@@ -64,9 +81,68 @@
                     </div>
                 </form>
             </div>
+            <div class="card-footer bg-light">
+                <div class="text-muted text-center small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Fields marked with <span class="text-danger">*</span> are required
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom form styles */
+    .form-control:focus, .form-select:focus {
+        border-color: #2ecc71;
+        box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 0.375rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dce4ec;
+        transition: all 0.3s ease;
+    }
+    
+    .form-label {
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    /* Card styling */
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+    
+    /* Animation classes */
+    .form-group {
+        transition: all 0.3s ease;
+    }
+    
+    .form-group:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* Required field indicator */
+    .form-label .text-danger {
+        font-weight: bold;
+    }
+    
+    /* Textarea styling */
+    textarea.form-control {
+        min-height: 120px;
+    }
+</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -86,6 +162,24 @@
                 form.classList.add('was-validated');
             }, false);
         });
+        
+        // Add focus animation to form fields
+        const formControls = document.querySelectorAll('.form-control, .form-select');
+        
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.closest('.form-group').style.transform = 'translateY(-5px)';
+                this.closest('.form-group').style.boxShadow = '0 4px 10px rgba(0,0,0,0.05)';
+            });
+            
+            control.addEventListener('blur', function() {
+                this.closest('.form-group').style.transform = '';
+                this.closest('.form-group').style.boxShadow = '';
+            });
+        });
+        
+        // Reinitialize AOS for animations
+        AOS.refresh();
     });
 </script>
 {% endblock %}
