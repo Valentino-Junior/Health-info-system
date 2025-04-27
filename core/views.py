@@ -220,12 +220,71 @@ def update_enrollment(request, enrollment_id):
 
 
 def enrollment_list(request):
-    """View for listing all enrollments in the system"""
+    """View for listing all enrollments in the system with chart data"""
+    from django.db.models import Count
+    from django.db.models.functions import TruncMonth
+    
+    # Get all enrollments
     enrollments = Enrollment.objects.all().select_related('client', 'program').order_by('-enrollment_date')
+    
+    # Data for Program Distribution Chart
+    program_stats = HealthProgram.objects.annotate(
+        count=Count('enrollment')
+    ).values('name', 'count').order_by('-count')
+    
+    # Data for Enrollment Timeline Chart - past 12 months
+    from datetime import datetime, timedelta
+    import calendar
+    
+    # Get enrollments for the past 12 months
+    today = datetime.now().date()
+    twelve_months_ago = today - timedelta(days=365)
+    
+    # Get counts per month
+    enrollment_by_month = Enrollment.objects.filter(
+        enrollment_date__gte=twelve_months_ago
+    ).annotate(
+        month=TruncMonth('enrollment_date')
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+    
+    # Process the data for the chart
+    timeline_stats = []
+    for item in enrollment_by_month:
+        month_name = calendar.month_name[item['month'].month]
+        year = item['month'].year
+        timeline_stats.append({
+            'month': f"{month_name} {year}",
+            'count': item['count']
+        })
+    
+    # If there's no data for some months, fill with zeros
+    if len(timeline_stats) < 12:
+        # Generate all months for the past year
+        all_months = []
+        for i in range(12):
+            month_date = today.replace(day=1) - timedelta(days=30*i)
+            month_name = calendar.month_name[month_date.month]
+            year = month_date.year
+            all_months.append(f"{month_name} {year}")
+        
+        # Create a dict for easy lookup
+        existing_data = {item['month']: item['count'] for item in timeline_stats}
+        
+        # Create the final timeline stats with all months
+        timeline_stats = []
+        for month in reversed(all_months):
+            timeline_stats.append({
+                'month': month,
+                'count': existing_data.get(month, 0)
+            })
     
     context = {
         'enrollments': enrollments,
         'total_enrollments': enrollments.count(),
+        'program_stats': program_stats,
+        'timeline_stats': timeline_stats,
         'title': 'All Enrollments'
     }
     return render(request, 'enrollment/list.html', context)
