@@ -24,4 +24,5 @@ urlpatterns = [
     path('clients/<uuid:client_id>/enroll/', views.enroll_client, name='enroll_client'),
     path('enrollments/<uuid:enrollment_id>/update/', views.update_enrollment, name='update_enrollment'),
     path('enrollments/', views.enrollment_list, name='enrollment_list'),
+    path('enrollments/quick/', views.direct_enrollment, name='direct_enrollment'),
 ]
