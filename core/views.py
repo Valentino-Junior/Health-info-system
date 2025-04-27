@@ -1,3 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.contrib import messages
+from django.db.models import Q
+from django.utils import timezone
 
-# Create your views here.
+from .models import *
+from .forms import *
+
+
+def dashboard(request):
+    """View for the dashboard showing system overview"""
+    total_clients = Client.objects.count()
+    total_programs = HealthProgram.objects.count()
+    total_enrollments = Enrollment.objects.count()
+    
+    recent_clients = Client.objects.order_by('-created_at')[:5]
+    recent_programs = HealthProgram.objects.order_by('-created_at')[:5]
+    
+    context = {
+        'total_clients': total_clients,
+        'total_programs': total_programs,
+        'total_enrollments': total_enrollments,
+        'recent_clients': recent_clients,
+        'recent_programs': recent_programs,
+    }
+    return render(request, 'dashboard.html', context)
