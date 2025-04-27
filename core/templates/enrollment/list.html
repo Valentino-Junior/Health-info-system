@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}All Enrollments - Health Information System{% endblock %}
+
+{% block page_header %}All Program Enrollments{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'dashboard' %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12" data-aos="fade-up">
+        <div class="card shadow">
+            <div class="card-header" style="background-color: #3498db; color: white;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-clipboard-list me-2"></i> All Program Enrollments
+                    </div>
+                    <span class="badge bg-light text-dark">{{ total_enrollments }} Enrollments</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Program</th>
+                                <th>Enrollment Date</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr class="enrollment-row" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:50 }}">
+                                <td>
+                                    <a href="{% url 'client_detail' pk=enrollment.client.id %}" class="text-decoration-none fw-bold">
+                                        {{ enrollment.client.full_name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'program_detail' pk=enrollment.program.id %}" class="text-decoration-none">
+                                        {{ enrollment.program.name }}
+                                    </a>
+                                </td>
+                                <td>{{ enrollment.enrollment_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if enrollment.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ enrollment.notes|truncatechars:30|default:"-" }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'client_detail' pk=enrollment.client.id %}" class="btn btn-sm btn-info text-white" title="View Client">
+                                            <i class="fas fa-user"></i>
+                                        </a>
+                                        <a href="{% url 'program_detail' pk=enrollment.program.id %}" class="btn btn-sm btn-primary" title="View Program">
+                                            <i class="fas fa-clipboard-list"></i>
+                                        </a>
+                                        <a href="{% url 'update_enrollment' enrollment_id=enrollment.id %}" class="btn btn-sm btn-warning text-white" title="Update Enrollment">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle me-2"></i> No enrollments found.
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i> Showing all enrollments in the system
+                    </small>
+                    <div>
+                        <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-secondary">
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enrollment Statistics -->
+<div class="row">
+    <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="card shadow h-100">
+            <div class="card-header" style="background-color: #3498db; color: white;">
+                <i class="fas fa-chart-pie me-2"></i> Program Distribution
+            </div>
+            <div class="card-body">
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-pie fa-4x mb-3" style="color: #3498db;"></i>
+                    <p class="mb-0">Distribution of enrollments across different programs</p>
+                </div>
+                <!-- Placeholder for future chart -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="card shadow h-100">
+            <div class="card-header" style="background-color: #3498db; color: white;">
+                <i class="fas fa-calendar-alt me-2"></i> Enrollment Timeline
+            </div>
+            <div class="card-body">
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-alt fa-4x mb-3" style="color: #3498db;"></i>
+                    <p class="mb-0">Enrollment activity over time</p>
+                </div>
+                <!-- Placeholder for future chart -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .enrollment-row {
+        transition: all 0.3s ease;
+    }
+    
+    .enrollment-row:hover {
+        background-color: #f0f7ff;
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 0.75em;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Future JavaScript for charts or interactivity
+    });
+</script>
+{% endblock %}
