@@ -29,3 +29,16 @@ class ClientForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 3}),
             'national_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'National ID'}),
         }
+
+
+class ClientSearchForm(forms.Form):
+    """Form for searching clients"""
+    search = forms.CharField(
+        max_length=100, 
+        required=False, 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control search-input', 
+            'placeholder': 'Search by name, ID or phone number',
+            'aria-label': 'Search'
+        })
+    )
