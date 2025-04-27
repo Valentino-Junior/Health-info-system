@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Enrollment - Health Information System{% endblock %}
+
+{% block page_header %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'client_detail' pk=client.id %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Client Profile
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8" data-aos="fade-up">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-clipboard-check me-2"></i> Update Enrollment for {{ client.full_name }}
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    You are updating the enrollment details for <strong>{{ client.full_name }}</strong> in the
+                    <strong>{{ enrollment.program.name }}</strong> program.
+                </div>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                            <div class="form-floating mb-3">
+                                {{ form.program }}
+                                <label for="{{ form.program.id_for_label }}">Health Program</label>
+                            </div>
+                            {% if form.program.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.program.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
+                            <div class="form-floating mb-3">
+                                {{ form.enrollment_date }}
+                                <label for="{{ form.enrollment_date.id_for_label }}">Enrollment Date</label>
+                            </div>
+                            {% if form.enrollment_date.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.enrollment_date.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3" data-aos="fade-up" data-aos-delay="200">
+                        <div class="form-floating mb-3">
+                            {{ form.notes }}
+                            <label for="{{ form.notes.id_for_label }}">Notes</label>
+                        </div>
+                        {% if form.notes.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.notes.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4" data-aos="fade-up" data-aos-delay="250">
+                        <div class="form-check form-switch">
+                            {{ form.is_active }}
+                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                Active Enrollment
+                            </label>
+                        </div>
+                        {% if form.is_active.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.is_active.errors }}
+                        </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Uncheck this if the client is no longer actively participating in this program.
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="300">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-save me-2"></i> Update Enrollment
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-check-input {
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form animations and validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Bootstrap validation
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Animation for the active switch
+        const activeSwitch = document.querySelector('.form-switch');
+        
+        activeSwitch.addEventListener('change', function() {
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            if (checkbox.checked) {
+                this.style.color = 'var(--success)';
+                this.style.fontWeight = 'bold';
+            } else {
+                this.style.color = 'var(--secondary)';
+                this.style.fontWeight = 'normal';
+            }
+        });
+        
+        // Trigger change event to apply initial styling
+        activeSwitch.dispatchEvent(new Event('change'));
+    });
+</script>
+{% endblock %}
