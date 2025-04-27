@@ -97,3 +97,15 @@ def client_list(request):
     
     context = {'clients': clients, 'form': form}
     return render(request, 'client/list.html', context)
+
+
+def client_detail(request, pk):
+    """View for displaying a client's profile including enrolled programs"""
+    client = get_object_or_404(Client, pk=pk)
+    enrollments = Enrollment.objects.filter(client=client).select_related('program')
+    
+    context = {
+        'client': client,
+        'enrollments': enrollments
+    }
+    return render(request, 'client/detail.html', context)
