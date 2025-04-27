@@ -25,3 +25,11 @@ def dashboard(request):
         'recent_programs': recent_programs,
     }
     return render(request, 'dashboard.html', context)
+
+
+# Health Program Views
+def program_list(request):
+    """View for listing all health programs"""
+    programs = HealthProgram.objects.all()
+    context = {'programs': programs}
+    return render(request, 'program/list.html', context)
