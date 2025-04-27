@@ -15,7 +15,7 @@ A comprehensive health information system for managing clients and health progra
 
 ## 🚀 Technology Stack
 
-- **Backend**: Django 4.2.7
+- **Backend**: Django 5.2
 - **API**: Django REST Framework
 - **Frontend**: Bootstrap 5, HTML5, CSS3, JavaScript
 - **Visualization**: Chart.js
