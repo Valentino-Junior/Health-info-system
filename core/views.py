@@ -77,3 +77,23 @@ def program_update(request, pk):
     
     context = {'form': form, 'program': program, 'title': 'Update Health Program'}
     return render(request, 'program/form.html', context)
+
+
+# Client Views
+def client_list(request):
+    """View for listing and searching clients"""
+    form = ClientSearchForm(request.GET)
+    clients = Client.objects.all()
+    
+    # Search functionality
+    if form.is_valid() and form.cleaned_data['search']:
+        search_query = form.cleaned_data['search']
+        clients = clients.filter(
+            Q(first_name__icontains=search_query) | 
+            Q(last_name__icontains=search_query) | 
+            Q(national_id__icontains=search_query) |
+            Q(phone_number__icontains=search_query)
+        )
+    
+    context = {'clients': clients, 'form': form}
+    return render(request, 'client/list.html', context)
