@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}Quick Enrollment - Health Information System{% endblock %}
+
+{% block page_header %}Quick Client Enrollment{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'enrollment_list' %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Enrollments
+    </a>
+    <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-home me-1"></i> Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8" data-aos="fade-up">
+        <div class="card shadow">
+            <div class="card-header" style="background-color: #3498db; color: white;">
+                <i class="fas fa-bolt me-2"></i> Quick Enrollment
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> 
+                    Use this form to quickly enroll any client in one or more health programs.
+                </div>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Client Selection -->
+                    <div class="mb-4" data-aos="fade-up" data-aos-delay="100">
+                        <label for="client" class="form-label fw-semibold">
+                            Select Client <span class="text-danger">*</span>
+                        </label>
+                        <select name="client" id="client" class="form-select" required>
+                            <option value="">-- Select a client --</option>
+                            {% for client in clients %}
+                            <option value="{{ client.id }}">{{ client.full_name }} (ID: {{ client.national_id|default:"N/A" }})</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a client.
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-user me-1"></i> Can't find a client? <a href="{% url 'client_create' %}">Register a new client</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Programs Selection -->
+                    <div class="mb-4" data-aos="fade-up" data-aos-delay="150">
+                        <label class="form-label fw-semibold">
+                            Select Programs <span class="text-danger">*</span>
+                        </label>
+                        <div class="program-selection">
+                            {% for program in programs %}
+                            <div class="form-check program-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="programs" value="{{ program.id }}" id="program_{{ program.id }}">
+                                <label class="form-check-label d-flex align-items-start" for="program_{{ program.id }}">
+                                    <div>
+                                        <div class="fw-bold">{{ program.name }}</div>
+                                        <div class="text-muted small">{{ program.description|truncatechars:150 }}</div>
+                                    </div>
+                                </label>
+                            </div>
+                            {% empty %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i> 
+                                No health programs found. <a href="{% url 'program_create' %}">Create a health program</a> first.
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="invalid-feedback">
+                            Please select at least one program.
+                        </div>
+                    </div>
+                    
+                    <!-- Enrollment Date -->
+                    <div class="row mb-3">
+                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                            <div class="form-group">
+                                <label for="enrollment_date" class="form-label fw-semibold">
+                                    Enrollment Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" id="enrollment_date" name="enrollment_date" class="form-control" required value="{{ today|date:'Y-m-d' }}">
+                                <div class="invalid-feedback">
+                                    Please provide an enrollment date.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div class="mb-4" data-aos="fade-up" data-aos-delay="250">
+                        <div class="form-group">
+                            <label for="notes" class="form-label fw-semibold">
+                                Notes (Optional)
+                            </label>
+                            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="Add any additional notes about this enrollment"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="row">
+                        <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="300">
+                            <button type="submit" class="btn btn-lg px-5 py-2" style="background-color: #3498db; color: white;">
+                                <i class="fas fa-check-circle me-2"></i> Complete Enrollment
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="text-muted text-center small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Fields marked with <span class="text-danger">*</span> are required
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Program selection area */
+    .program-selection {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 15px;
+        border: 1px solid #dce4ec;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+    }
+    
+    .program-check {
+        padding: 12px;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
+    
+    .program-check:hover {
+        background-color: #f0f7ff;
+    }
+    
+    .program-check .form-check-input {
+        margin-top: 0.25rem;
+    }
+    
+    .program-check .form-check-label {
+        padding-left: 10px;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    /* Custom form styles */
+    .form-control:focus, .form-select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 0.375rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dce4ec;
+        transition: all 0.3s ease;
+    }
+    
+    .form-label {
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    /* Form check customization */
+    .form-check-input:checked {
+        background-color: #3498db;
+        border-color: #3498db;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhance program selection experience
+        const programChecks = document.querySelectorAll('.program-check');
+        
+        programChecks.forEach(check => {
+            check.addEventListener('click', function(e) {
+                // Allow clicking anywhere in the row to toggle the checkbox
+                if (e.target.type !== 'checkbox') {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                }
+                
+                // Highlight selected programs
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                if (checkbox.checked) {
+                    this.style.backgroundColor = '#e8f4ff';
+                    this.style.borderLeft = '3px solid #3498db';
+                } else {
+                    this.style.backgroundColor = '';
+                    this.style.borderLeft = '';
+                }
+            });
+        });
+        
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // Check if at least one program is selected
+            const programCheckboxes = document.querySelectorAll('input[name="programs"]:checked');
+            if (programCheckboxes.length === 0) {
+                event.preventDefault();
+                event.stopPropagation();
+                document.querySelector('.program-selection').classList.add('border-danger');
+            } else {
+                document.querySelector('.program-selection').classList.remove('border-danger');
+            }
+            
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %}
