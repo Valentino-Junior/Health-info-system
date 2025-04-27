@@ -288,3 +288,65 @@ def enrollment_list(request):
         'title': 'All Enrollments'
     }
     return render(request, 'enrollment/list.html', context)
+
+
+def direct_enrollment(request):
+    """View for enrolling any client in programs directly"""
+    from django.utils import timezone
+    
+    # For GET request, initialize empty forms
+    if request.method == 'GET':
+        # Get all clients and programs for selection
+        clients = Client.objects.all().order_by('last_name', 'first_name')
+        programs = HealthProgram.objects.all().order_by('name')
+        
+        context = {
+            'clients': clients,
+            'programs': programs,
+            'today': timezone.now(),
+            'title': 'Quick Enrollment'
+        }
+        return render(request, 'enrollment/direct_enrollment.html', context)
+    
+    # For POST request, process the enrollment
+    elif request.method == 'POST':
+        client_id = request.POST.get('client')
+        program_ids = request.POST.getlist('programs')
+        enrollment_date = request.POST.get('enrollment_date')
+        notes = request.POST.get('notes')
+        
+        if not client_id or not program_ids or not enrollment_date:
+            messages.error(request, "Please select a client, at least one program, and an enrollment date.")
+            return redirect('direct_enrollment')
+        
+        try:
+            client = Client.objects.get(pk=client_id)
+            enrollment_count = 0
+            
+            for program_id in program_ids:
+                program = HealthProgram.objects.get(pk=program_id)
+                
+                # Create or update enrollment
+                enrollment, created = Enrollment.objects.update_or_create(
+                    client=client,
+                    program=program,
+                    defaults={
+                        'enrollment_date': enrollment_date,
+                        'notes': notes,
+                        'is_active': True
+                    }
+                )
+                
+                if created:
+                    enrollment_count += 1
+            
+            if enrollment_count > 0:
+                messages.success(request, f"{client.full_name} enrolled in {enrollment_count} program(s) successfully!")
+            else:
+                messages.info(request, "Client was already enrolled in the selected programs. Enrollments were updated.")
+            
+            return redirect('enrollment_list')
+            
+        except (Client.DoesNotExist, HealthProgram.DoesNotExist) as e:
+            messages.error(request, f"Error: {str(e)}")
+            return redirect('direct_enrollment')
