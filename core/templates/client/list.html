@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Clients - Health Information System{% endblock %}
+
+{% block page_header %}Clients Management{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'client_create' %}" class="btn btn-sm btn-primary">
+        <i class="fas fa-user-plus me-1"></i> Register New Client
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Search Form -->
+<div class="card mb-4" data-aos="fade-up">
+    <div class="card-header">
+        <i class="fas fa-search me-2"></i> Search Clients
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'client_list' %}" class="row g-3">
+            <div class="col-md-10">
+                {{ form.search }}
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Clients List -->
+<div class="card" data-aos="fade-up" data-aos-delay="100">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-users me-2"></i> All Clients</span>
+            <span class="badge bg-primary">{{ clients.count }} Clients</span>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Full Name</th>
+                        <th>National ID</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Contact</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr class="client-row" data-aos="fade-right" data-aos-delay="{{ forloop.counter|add:100 }}">
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.national_id }}</td>
+                        <td>{{ client.get_gender_display }}</td>
+                        <td>{{ client.age }}</td>
+                        <td>{{ client.phone_number }}</td>
+                        <td>{{ client.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'client_detail' pk=client.id %}" class="btn btn-sm btn-info text-white" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'client_update' pk=client.id %}" class="btn btn-sm btn-warning text-white" title="Edit Client">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'enroll_client' client_id=client.id %}" class="btn btn-sm btn-success" title="Enroll in Program">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i> No clients found. 
+                                <a href="{% url 'client_create' %}" class="alert-link">Register a new client</a>.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animation for search results
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-input');
+        const clientRows = document.querySelectorAll('.client-row');
+        
+        searchInput.addEventListener('focus', function() {
+            this.style.boxShadow = '0 0 0 0.25rem rgba(52, 152, 219, 0.25)';
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.style.boxShadow = '';
+        });
+        
+        // Add hover effect to rows
+        clientRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f7ff';
+                this.style.transition = 'background-color 0.3s ease';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+            });
+        });
+    });
+</script>
+{% endblock %}
