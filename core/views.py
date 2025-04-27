@@ -192,3 +192,27 @@ def enroll_client(request, client_id):
         'title': f'Enroll {client.full_name} in Programs'
     }
     return render(request, 'client/enroll.html', context)
+
+
+
+def update_enrollment(request, enrollment_id):
+    """View for updating a client's enrollment in a program"""
+    enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
+    client = enrollment.client
+    
+    if request.method == 'POST':
+        form = EnrollmentForm(request.POST, instance=enrollment)
+        if form.is_valid():
+            enrollment = form.save()
+            messages.success(request, f"Enrollment updated successfully!")
+            return redirect('client_detail', pk=client.id)
+    else:
+        form = EnrollmentForm(instance=enrollment)
+    
+    context = {
+        'form': form,
+        'enrollment': enrollment,
+        'client': client,
+        'title': f'Update Enrollment for {client.full_name}'
+    }
+    return render(request, 'client/update_enrollment.html', context)
