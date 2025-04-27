@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Health Information System{% endblock %}
+
+{% block page_header %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'client_list' %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Clients
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8" data-aos="fade-up">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas {% if client %}fa-edit{% else %}fa-user-plus{% endif %} me-2"></i> 
+                {{ title }}
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <h5 class="text-muted mb-3">Personal Information</h5>
+                            <hr>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.first_name }}
+                                <label for="{{ form.first_name.id_for_label }}">First Name *</label>
+                            </div>
+                            {% if form.first_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.first_name.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.last_name }}
+                                <label for="{{ form.last_name.id_for_label }}">Last Name *</label>
+                            </div>
+                            {% if form.last_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.last_name.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.date_of_birth }}
+                                <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth *</label>
+                            </div>
+                            {% if form.date_of_birth.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.date_of_birth.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.gender }}
+                                <label for="{{ form.gender.id_for_label }}">Gender *</label>
+                            </div>
+                            {% if form.gender.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.gender.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.national_id }}
+                                <label for="{{ form.national_id.id_for_label }}">National ID</label>
+                            </div>
+                            {% if form.national_id.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.national_id.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <h5 class="text-muted mb-3">Contact Information</h5>
+                            <hr>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.phone_number }}
+                                <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                            </div>
+                            {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.phone_number.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.email }}
+                                <label for="{{ form.email.id_for_label }}">Email Address</label>
+                            </div>
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.email.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.address }}
+                                <label for="{{ form.address.id_for_label }}">Home Address</label>
+                            </div>
+                            {% if form.address.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.address.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fas {% if client %}fa-save{% else %}fa-user-plus{% endif %} me-2"></i>
+                                {% if client %}Update Client{% else %}Register Client{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form animations and validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to form inputs
+        const formInputs = document.querySelectorAll('.form-floating');
+        
+        formInputs.forEach((input, index) => {
+            input.setAttribute('data-aos', 'fade-up');
+            input.setAttribute('data-aos-delay', 100 + (index * 50));
+        });
+        
+        // Bootstrap validation
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Reinitialize AOS after adding attributes
+        AOS.refresh();
+    });
+</script>
+{% endblock %}
