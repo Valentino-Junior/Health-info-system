@@ -141,3 +141,54 @@ def client_update(request, pk):
     
     context = {'form': form, 'client': client, 'title': 'Update Client Information'}
     return render(request, 'client/form.html', context)
+
+
+# Enrollment Views
+def enroll_client(request, client_id):
+    """View for enrolling a client in one or more programs"""
+    client = get_object_or_404(Client, pk=client_id)
+    
+    if request.method == 'POST':
+        form = MultiEnrollmentForm(request.POST)
+        if form.is_valid():
+            programs = form.cleaned_data['programs']
+            enrollment_date = form.cleaned_data['enrollment_date']
+            notes = form.cleaned_data['notes']
+            
+            # Create enrollments for each selected program
+            enrollment_count = 0
+            for program in programs:
+                # Check if enrollment already exists
+                enrollment, created = Enrollment.objects.update_or_create(
+                    client=client,
+                    program=program,
+                    defaults={
+                        'enrollment_date': enrollment_date,
+                        'notes': notes,
+                        'is_active': True
+                    }
+                )
+                if created:
+                    enrollment_count += 1
+            
+            if enrollment_count > 0:
+                messages.success(request, f"Client enrolled in {enrollment_count} program(s) successfully!")
+            else:
+                messages.info(request, "Client was already enrolled in the selected programs. Enrollments were updated.")
+            
+            return redirect('client_detail', pk=client.id)
+    else:
+        # Get programs the client is not yet enrolled in
+        enrolled_program_ids = Enrollment.objects.filter(client=client).values_list('program_id', flat=True)
+        available_programs = HealthProgram.objects.exclude(id__in=enrolled_program_ids)
+        
+        form = MultiEnrollmentForm()
+        form.fields['programs'].queryset = available_programs
+        form.fields['enrollment_date'].initial = timezone.now().date()
+    
+    context = {
+        'form': form,
+        'client': client,
+        'title': f'Enroll {client.full_name} in Programs'
+    }
+    return render(request, 'client/enroll.html', context)
