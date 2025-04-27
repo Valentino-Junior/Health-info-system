@@ -37,3 +37,29 @@ class ClientViewSet(viewsets.ReadOnlyModelViewSet):
         enrollments = Enrollment.objects.filter(client=client).select_related('program')
         serializer = EnrollmentSerializer(enrollments, many=True)
         return Response(serializer.data)
+
+
+class HealthProgramViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint for viewing health programs.
+    Provides:
+    - List all health programs
+    - Retrieve a specific health program
+    """
+    queryset = HealthProgram.objects.all()
+    serializer_class = HealthProgramSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'created_at']
+    ordering = ['name']
+    
+    @action(detail=True, methods=['get'])
+    def clients(self, request, pk=None):
+        """
+        Returns all clients enrolled in a specific health program
+        """
+        program = self.get_object()
+        enrolled_clients = Client.objects.filter(programs=program)
+        serializer = ClientSerializer(enrolled_clients, many=True)
+        return Response(serializer.data)
