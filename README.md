@@ -2,8 +2,6 @@
 
 A comprehensive health information system for managing clients and health programs/services. This Django-based application enables healthcare providers to register clients, create health programs, enroll clients in programs, and access client information through an intuitive user interface and API.
 
-![Dashboard Preview](https://i.imgur.com/z8cGPRQ.png)
-
 ## 🌟 Features
 
 - **Client Management**: Register, search, and manage client profiles with detailed information
