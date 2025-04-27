@@ -16,7 +16,7 @@
 <div class="row justify-content-center">
     <div class="col-md-8" data-aos="fade-up">
         <div class="card shadow">
-            <div class="card-header bg-success text-white">
+            <div class="card-header" style="background-color: #3498db; color: white;">
                 <i class="fas {% if program %}fa-edit{% else %}fa-plus-circle{% endif %} me-2"></i> 
                 {{ title }}
             </div>
@@ -27,7 +27,7 @@
                     <!-- Program Details Section -->
                     <div class="row mb-4">
                         <div class="col-12 text-center" data-aos="fade-up">
-                            <h5 class="text-success mb-2">
+                            <h5 class="mb-2" style="color: #3498db;">
                                 <i class="fas fa-clipboard-list me-2"></i>Program Details
                             </h5>
                             <hr>
@@ -73,7 +73,7 @@
                     <!-- Submit Button -->
                     <div class="row mt-4">
                         <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="300">
-                            <button type="submit" class="btn btn-success btn-lg px-5 py-2">
+                            <button type="submit" class="btn btn-lg px-5 py-2" style="background-color: #3498db; color: white;">
                                 <i class="fas {% if program %}fa-save{% else %}fa-plus-circle{% endif %} me-2"></i>
                                 {% if program %}Update Program{% else %}Create Program{% endif %}
                             </button>
@@ -96,8 +96,8 @@
 <style>
     /* Custom form styles */
     .form-control:focus, .form-select:focus {
-        border-color: #2ecc71;
-        box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
     }
     
     .form-control, .form-select {
