@@ -30,3 +30,15 @@ class ClientSerializer(serializers.ModelSerializer):
             'age', 'gender', 'phone_number', 'email', 'address', 
             'national_id', 'created_at', 'updated_at'
         ]
+
+
+class ClientDetailSerializer(ClientSerializer):
+    """Serializer for detailed client information including enrollments"""
+    enrollments = serializers.SerializerMethodField()
+    
+    class Meta(ClientSerializer.Meta):
+        fields = ClientSerializer.Meta.fields + ['enrollments']
+    
+    def get_enrollments(self, obj):
+        enrollments = Enrollment.objects.filter(client=obj).select_related('program')
+        return EnrollmentSerializer(enrollments, many=True).data
