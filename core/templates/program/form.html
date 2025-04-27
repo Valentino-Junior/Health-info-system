@@ -32,10 +32,8 @@
                     </div>
                     
                     <div class="mb-3" data-aos="fade-up" data-aos-delay="100">
-                        <div class="form-floating mb-3">
-                            {{ form.name }}
-                            <label for="{{ form.name.id_for_label }}">Program Name *</label>
-                        </div>
+                        <label for="{{ form.name.id_for_label }}" class="form-label">Program Name *</label>
+                        {{ form.name }}
                         {% if form.name.errors %}
                         <div class="invalid-feedback d-block">
                             {{ form.name.errors }}
@@ -44,10 +42,8 @@
                     </div>
                     
                     <div class="mb-4" data-aos="fade-up" data-aos-delay="150">
-                        <div class="form-floating mb-3">
-                            {{ form.description }}
-                            <label for="{{ form.description.id_for_label }}">Program Description</label>
-                        </div>
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Program Description</label>
+                        {{ form.description }}
                         {% if form.description.errors %}
                         <div class="invalid-feedback d-block">
                             {{ form.description.errors }}
@@ -77,14 +73,6 @@
 <script>
     // Form animations and validation
     document.addEventListener('DOMContentLoaded', function() {
-        // Add animation to form inputs
-        const formInputs = document.querySelectorAll('.form-floating');
-        
-        formInputs.forEach((input, index) => {
-            input.setAttribute('data-aos', 'fade-up');
-            input.setAttribute('data-aos-delay', 100 + (index * 50));
-        });
-        
         // Bootstrap validation
         const forms = document.querySelectorAll('.needs-validation');
         
@@ -98,9 +86,6 @@
                 form.classList.add('was-validated');
             }, false);
         });
-        
-        // Reinitialize AOS after adding attributes
-        AOS.refresh();
     });
 </script>
 {% endblock %}
