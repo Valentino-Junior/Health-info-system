@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Health Information System{% endblock %}
+
+{% block page_header %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group">
+    <a href="{% url 'program_list' %}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Programs
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8" data-aos="fade-up">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas {% if program %}fa-edit{% else %}fa-plus-circle{% endif %} me-2"></i> 
+                {{ title }}
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <h5 class="text-muted mb-3">Program Details</h5>
+                            <hr>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3" data-aos="fade-up" data-aos-delay="100">
+                        <div class="form-floating mb-3">
+                            {{ form.name }}
+                            <label for="{{ form.name.id_for_label }}">Program Name *</label>
+                        </div>
+                        {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.name.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4" data-aos="fade-up" data-aos-delay="150">
+                        <div class="form-floating mb-3">
+                            {{ form.description }}
+                            <label for="{{ form.description.id_for_label }}">Program Description</label>
+                        </div>
+                        {% if form.description.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.description.errors }}
+                        </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Provide a detailed description of the health program, its objectives, and guidelines.
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="200">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fas {% if program %}fa-save{% else %}fa-plus-circle{% endif %} me-2"></i>
+                                {% if program %}Update Program{% else %}Create Program{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form animations and validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to form inputs
+        const formInputs = document.querySelectorAll('.form-floating');
+        
+        formInputs.forEach((input, index) => {
+            input.setAttribute('data-aos', 'fade-up');
+            input.setAttribute('data-aos-delay', 100 + (index * 50));
+        });
+        
+        // Bootstrap validation
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Reinitialize AOS after adding attributes
+        AOS.refresh();
+    });
+</script>
+{% endblock %}
