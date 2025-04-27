@@ -16,3 +16,17 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enrollment
         fields = ['id', 'program', 'enrollment_date', 'is_active', 'notes', 'created_at', 'updated_at']
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    """Serializer for the Client model"""
+    age = serializers.IntegerField(read_only=True)
+    full_name = serializers.CharField(read_only=True)
+    
+    class Meta:
+        model = Client
+        fields = [
+            'id', 'first_name', 'last_name', 'full_name', 'date_of_birth', 
+            'age', 'gender', 'phone_number', 'email', 'address', 
+            'national_id', 'created_at', 'updated_at'
+        ]
