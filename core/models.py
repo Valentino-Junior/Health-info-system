@@ -56,3 +56,22 @@ class Client(models.Model):
         return today.year - self.date_of_birth.year - (
             (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
         )
+
+
+class Enrollment(models.Model):
+    """Model representing a client's enrollment in a health program"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    program = models.ForeignKey(HealthProgram, on_delete=models.CASCADE)
+    enrollment_date = models.DateField(default=timezone.now)
+    notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['client', 'program']
+        ordering = ['-enrollment_date']
+    
+    def __str__(self):
+        return f"{self.client} - {self.program}"
