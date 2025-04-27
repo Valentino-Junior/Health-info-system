@@ -109,3 +109,18 @@ def client_detail(request, pk):
         'enrollments': enrollments
     }
     return render(request, 'client/detail.html', context)
+
+
+def client_create(request):
+    """View for registering a new client"""
+    if request.method == 'POST':
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            client = form.save()
+            messages.success(request, f"Client '{client.full_name}' registered successfully!")
+            return redirect('client_detail', pk=client.id)
+    else:
+        form = ClientForm()
+    
+    context = {'form': form, 'title': 'Register New Client'}
+    return render(request, 'client/form.html', context)
